@@ -1,0 +1,50 @@
+<head>
+    <meta charset="utf-8">
+    <title>Login</title>
+    <base href="/">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+        integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+</head>
+<div id="container">
+    <div id="chatbotarea" [ngClass]="themeChatbot">
+        <div id="chatbot" *ngIf="mostrar">
+            <header id="chatbothead">
+                <img src="../../../assets/img/logo_ISSFA_banner.png" class="logo" alt="">
+                <span id="minim_chat_window" class="icon_minim" (click)="toggleBox()"></span>
+            </header>
+            <div id="chatbotmessage" >
+                <div class="row">
+                    <div class="col">
+                        <div class="messagecontainer">
+                            <img class="imgbot" src="assets/img/logoMessage.png" alt="img">
+                            <p class="chatmessage">Por favor, escríbeme tu número de cédula.</p>    
+                        </div>                        
+                    </div>
+                </div>
+
+                <div [ngSwitch]="showContent">  
+                    <div *ngSwitchCase="2">
+                        <form name="form" [formGroup]="form" #archivarForm="ngForm" (ngSubmit)="onSubmit1(archivarForm)" style="height: 236px">
+                            <div class="form-group mt-3" style="margin-bottom: 7px;">
+                                <label >Número de cédula: </label>
+                                <input type="text" class="form-control" formControlName="cedula"
+                                    matInput #cedula name="cedula" [(ngModel)]="personas.cedula" required>
+                            </div>
+                            <div *ngIf="errorMsg" class="alert alert-danger  text-center" style="margin-bottom:10px ; ">{{errorMsg}}</div>
+                            <div class="text-center">
+                                <button type="submit" class="btn color " [disabled]="!archivarForm.form.valid" >Iniciar Chat</button>
+                            </div>
+                            <div class="link-chat">
+                                <a [routerLink]="['/login']">Sistema Administrativo ChatBot</a>
+                            </div>                                
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <img id="ocultar" class="img_size" src="{{img}}" alt="" *ngIf="!mostrar" (click)="toggleBox()">
+    </div>
+</div>
+
