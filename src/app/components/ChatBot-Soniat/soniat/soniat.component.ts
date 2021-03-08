@@ -197,8 +197,10 @@ export class SoniatComponent implements OnInit {
   questionPublic(question: string) {
     this.soniatService.questionPublic(this.idPublic, question).subscribe(response => {
       this.saveMessage(response.response_soniat, false);
-      // console.log(response)
+       //console.log(response, "aquiiii")
     }, (error) => {
+      console.log(error, "aquiiii")
+
       this.errorMsg = error;
       this.swalWarning()
       throw error;
