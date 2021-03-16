@@ -1,5 +1,5 @@
 export var GLOBAL = {
-    logo: 'assets/logo.png',
+    logo: 'assets/img/logo.png',
     avatar: 'assets/avatar.png'
    };
    
