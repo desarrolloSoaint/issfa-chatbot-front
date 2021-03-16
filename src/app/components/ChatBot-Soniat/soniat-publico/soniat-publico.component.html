@@ -10,7 +10,8 @@
     <div id="chatbotarea" [ngClass]="themeChatbot">
         <div id="chatbot" *ngIf="mostrar">
             <header id="chatbothead">
-                <img src="../../../assets/img/logo_ISSFA_banner.png" class="logo" alt="">
+                <a [routerLink]="['/login']"><img src="../../../assets/img/logo_ISSFA_banner.png" class="logo" alt=""></a>
+                
                 <span id="minim_chat_window" class="icon_minim" (click)="toggleBox()"></span>
             </header>
             <div id="chatbotmessage" >
@@ -25,23 +26,45 @@
 
                 <div [ngSwitch]="showContent">  
                     <div *ngSwitchCase="2">
-                        <form name="form" [formGroup]="form" #archivarForm="ngForm" (ngSubmit)="onSubmit1(archivarForm)" style="height: 236px">
+                        <form name="form" [formGroup]="form" #archivarForm="ngForm" (ngSubmit)="validarCedula(archivarForm)" style="height: 100px">
                             <div class="form-group mt-3" style="margin-bottom: 7px;">
                                 <label >Número de cédula: </label>
                                 <input type="text" class="form-control" formControlName="cedula"
                                     matInput #cedula name="cedula" [(ngModel)]="personas.cedula" required>
                             </div>
                             <div *ngIf="errorMsg" class="alert alert-danger  text-center" style="margin-bottom:10px ; ">{{errorMsg}}</div>
-                            <div class="text-center">
-                                <button type="submit" class="btn color " [disabled]="!archivarForm.form.valid" >Iniciar Chat</button>
-                            </div>
-                            <div class="link-chat">
-                                <a [routerLink]="['/login']">Sistema Administrativo ChatBot</a>
-                            </div>                                
+                            <div class="text-center" *ngIf="mostrarBoton">
+                                <button type="submit" class="btn color " [disabled]="!archivarForm.form.valid" >Enviar</button>
+                            </div>                              
                         </form>
                     </div>
                 </div>
+
+                <div class="alv">
+                    <div class="messagecontainer" *ngIf="ocultarBotonPregunta">
+                        <img class="imgbot" src="assets/img/logoMessage.png" alt="img">
+                        <p class="chatmessage">Módulo afiliación</p>    
+                    </div>       
+                    <form *ngIf="ocultarBotonPregunta" name="formC" [formGroup]="formC" #archivarFormC="ngForm" (ngSubmit)="validarPreguntas(archivarFormC)">
+                        <ng-container *ngFor="let message of messages">
+                            <app-message [messageInput]='message'></app-message>
+                        </ng-container>
+                        
+                        <input type="text" class="form-control mb-1" formControlName="questionForm" value="{{questionForm}}" name="questionForm" hidden >
+                        <input type="text" class="form-control mb-1" formControlName="asnwerForm" name="asnwerForm" >
+                        
+                        <div *ngIf="msgPreguntas" class="alert alert-success  text-center" style="margin-bottom:10px ; ">{{msgPreguntas}}</div>
+                        <div *ngIf="errorMsgPreguntas" class="alert alert-danger  text-center" style="margin-bottom:10px ; ">{{errorMsgPreguntas}}</div>
+                        
+                        <button type="submit" class="btn color " [disabled]="!archivarFormC.form.valid">Siguiente</button>
+
+                        <div id="last-message" #scroll></div>
+                    </form>
+                                    
+                </div>  
+
             </div>
+           
 
         </div>
         <img id="ocultar" class="img_size" src="{{img}}" alt="" *ngIf="!mostrar" (click)="toggleBox()">

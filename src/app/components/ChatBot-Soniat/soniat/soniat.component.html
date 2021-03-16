@@ -9,6 +9,11 @@
                 <span id="minim_chat_window" class="icon_minim" (click)="toggleBox()"></span>
             </header>
             
+            <div class="messagecontainer" *ngIf="ocultarBotonPregunta">
+                <img class="imgbot" src="assets/img/logoMessage.png" alt="img">
+                <p class="chatmessage">Módulo de crédito</p>    
+            </div>
+
             <div id="chatbotmessage">
                 <ng-container *ngFor="let message of messages">
                     <app-message [messageInput]='message'></app-message>

@@ -78,7 +78,7 @@ export class SoniatComponent implements OnInit {
       message: ['', Validators.required]
     })
     // tslint:disable-next-line: max-line-length
-    this.saveMessage("Hola soy un robot virtual de ISSFA y seré tu asesor durante la consulta, puedes preguntarme por:<br/><br/>* Cuál es el monto de mi cuota a cancelar. <br/> * Cuál es el saldo total de mi préstamo. <br/> * Que tipos de crédito existe? <br/> * De acuerdo a mi nivel de ingreso a qué tipo de crédito puedo acceder",false)
+    this.saveMessage("Hola soy un robot virtual de ISSFA y seré tu asesor durante la consulta, puedes preguntarme por:<br/><br/><u>Modulo de créditos</u> <br/><br/>* Cuándo podría renovar mi crédito. <br/> * Cuál es mi saldo de mi crédito activo <br/> * Cuándo termina de cancelar el crédito <br/> * Número de cuotas pendientes <br/> * Número de créditos vigentes <br/> * Cuándo podría realizar un nuevo crédito",false)
     this.getThemeChatbot();
     this.authService.getAvatarChat().subscribe(
       data => {
