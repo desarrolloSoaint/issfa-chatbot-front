@@ -11,12 +11,13 @@ import { MessageComponent } from 'app/components/ChatBot-Soniat/message/message.
 import { AuthService } from 'app/services/auth.service';
 import { AvatarChat } from 'app/models/avatarChat';
 import Message from 'app/components/ChatBot-Soniat/message/message';
-import { Clientes } from 'app/models/clientes';
+import { Clientes, ClienteIssfa } from 'app/models/clientes';
 import { SoniatService } from 'app/services/soniat/soniat.service';
 import Swal from 'sweetalert2';
 import { EncuestaComponent } from '../encuesta/encuesta.component';
 import { MatDialog } from '@angular/material/dialog';
 import { Url_Back } from 'app/config/config';
+import { timeStamp } from 'console';
 
 @Component({
   selector: 'app-soniat',
@@ -30,6 +31,7 @@ export class SoniatComponent implements OnInit {
   @ViewChild('resetset', { static: false }) resetset: ElementRef;
   @ViewChildren(MessageComponent) childrenMessages: QueryList<MessageComponent>
   public clientes = new Clientes('', null, null,null);
+  public clienteIssfa = new ClienteIssfa();
   public  color: Colors = new Colors();
   public result: any;
   colors: Colors[] = [];
@@ -45,6 +47,7 @@ export class SoniatComponent implements OnInit {
   idPublic: number;
   idPrivate: number;
   avatar_chat: string;
+  cedula:Object;
   public edited = false;
   public arrayDesdeService: boolean;
 
@@ -177,7 +180,7 @@ export class SoniatComponent implements OnInit {
     this.themeService.getTheme().subscribe(response => response.forEach((color: Colors) => {
       this.colors.push(color);
       this.setThemeChatbot(response[0].color);
-      console.log(response);
+      //console.log(response);
     }))
   }
 
@@ -195,7 +198,8 @@ export class SoniatComponent implements OnInit {
   }
 
   questionPublic(question: string) {
-    this.soniatService.questionPublic(this.idPublic, question).subscribe(response => {
+    this.clienteIssfa = this.getClientIssfa();
+    this.soniatService.questionPublic(this.idPublic, question, this.clienteIssfa.cedula).subscribe(response => {
       this.saveMessage(response.response_soniat, false);
        //console.log(response, "aquiiii")
     }, (error) => {
@@ -225,6 +229,14 @@ export class SoniatComponent implements OnInit {
   getClientPrivate() {
     this.idPrivate = this.soniatService.getIdPrivate();
   }
+
+  getClientIssfa(): Object{
+
+    let obj = this.soniatService.getObjClientIssfa();
+    //console.log(obj);
+    return obj;
+  }
+
   //////////////////////Swal Alert/////////////////////////////
   swalWarning() {
     const Toast = Swal.mixin({

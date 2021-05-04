@@ -18,11 +18,12 @@ import { timeStamp } from 'console';
 import { personaISSFA } from './json';
 import { element } from 'protractor';
 import { MessageComponent } from '../message/message.component';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-soniat-publico',
   templateUrl: './soniat-publico.component.html',
-  styleUrls: ['./soniat-publico.component.scss']
+  styleUrls: ['./soniat-publico.component.scss'],
 })
 
 export class SoniatPublicoComponent implements OnInit {
@@ -30,12 +31,15 @@ export class SoniatPublicoComponent implements OnInit {
   public personas = new Personas('', null, null);
   @ViewChildren(MessageComponent) childrenMessages: QueryList<MessageComponent>
   public clientesPrivado = new PrivateClient('', null, '', null, '');
+  public clientIssfa;
   public errorMsg: string;
   public errorMsgPreguntas:string;
   public msgPreguntas:string;
   public errorMsg1: string;
   public mensaje: string;
   public result: any;
+  public cedula: string;
+  client;
   id: Country[] = [];
   avatarChat: AvatarChat[] = [];
   mostrar: boolean = false;
@@ -78,13 +82,16 @@ export class SoniatPublicoComponent implements OnInit {
   };
 
   constructor(private authService: AuthService,
-    private router: Router,
-    private formBuilder: FormBuilder,
-    public soniatService: SoniatService,
-    public themeService: ThemeSoniatService,) {
-    this.form = formBuilder.group({
-      cedula: ['', [Validators.required, Validators.pattern(/^[1-9]\d{1,10}$/)]],
-    });   
+              private router: Router,
+              private formBuilder: FormBuilder,
+              public soniatService: SoniatService,
+              public themeService: ThemeSoniatService,
+              public datepipe: DatePipe,) {
+
+              this.form = formBuilder.group({
+                cedula: ['', [Validators.required, Validators.pattern(/^[1-9]\d{1,10}$/)]],
+              });   
+
   }
 
   ngOnInit() {
@@ -123,45 +130,65 @@ export class SoniatPublicoComponent implements OnInit {
     if (messageElem) messageElem.scrollIntoView({ behavior: 'smooth', block: blockString })
   }
 
+  setClientIssfa(){
+    this.client = this.clientIssfa;
+  }
+
+  getClientIssfa(): any{
+    //console.log("cliente: ", this.client);
+    return this.client;
+  }
+
   validarCedula(f) {
 
-    if(f.value.cedula == personaISSFA.cedula){
+    this.soniatService.getClientIssfa(f.value.cedula).subscribe( response => {
+
+      this.clientIssfa = response.objectResponse;
+      this.setClientIssfa();
+      let filterCedula = response.objectResponse.cedula;
+
+      if(f.value.cedula == filterCedula){
       
-      this.mostrarBoton=false;      
-      this.questionRandom();
-      this.ocultarBotonPregunta = true;
-            
-    }else{
-      this.errorMsg = "Disculpe, no se encuentra registrado.";
-      setTimeout(() => { this.errorMsg = ""; }, 2500)
-    }
+        this.mostrarBoton=false;      
+        this.questionRandom();
+        this.ocultarBotonPregunta = true;
+              
+      }else{
+        this.errorMsg = "Disculpe, no se encuentra registrado.";
+        setTimeout(() => { this.errorMsg = ""; }, 2500)
+      }
+
+    });   
 
   }
  
   validarPreguntas(f){
       this.saveMessage(f.value.asnwerForm, true);
-      if(f.value.questionForm == this.question[0] && f.value.asnwerForm == personaISSFA.fecha_nacimiento){
+      let preguntas = this.getClientIssfa();
+      let latest_date = this.datepipe.transform(preguntas.fechaNacimiento, 'dd/MM/yyyy');
+
+      if(f.value.questionForm == this.question[0] && f.value.asnwerForm == latest_date){
         this.msgAsnwer();
         this.cont = this.cont +1;      
-      }else if(f.value.questionForm == this.question[1] && f.value.asnwerForm == personaISSFA.numero_dependiente){
+      }else if(f.value.questionForm == this.question[1] && f.value.asnwerForm == preguntas.numeroDependiente){
         this.msgAsnwer();
         this.cont = this.cont +1;   
-      }else if(f.value.questionForm == this.question[2] && f.value.asnwerForm == personaISSFA.grupo_sanguineo){
+      }else if(f.value.questionForm == this.question[2] && f.value.asnwerForm == preguntas.grupoSanguineo){
         this.msgAsnwer();
         this.cont = this.cont +1;         
-      }else if(f.value.questionForm == this.question[3] && f.value.asnwerForm == personaISSFA.numero_afiliacion){
+      }else if(f.value.questionForm == this.question[3] && f.value.asnwerForm == preguntas.numeroAfiliacion){
         this.msgAsnwer();
         this.cont = this.cont +1;   
-      }else if(f.value.questionForm == this.question[4] && f.value.asnwerForm == personaISSFA.estado_civil){
+      }else if(f.value.questionForm == this.question[4] && f.value.asnwerForm == preguntas.estadoCivil){
         this.msgAsnwer();
         this.cont = this.cont +1;   
-      }else if(f.value.questionForm == this.question[5] && f.value.asnwerForm == personaISSFA.tiempo_servicio){
+      }else if(f.value.questionForm == this.question[5] && f.value.asnwerForm == preguntas.tiempoServicio){
         this.msgAsnwer();
         this.cont = this.cont +1;   
-      }else if(f.value.questionForm == this.question[6] && f.value.asnwerForm == personaISSFA.email){
+      }else if(f.value.questionForm == this.question[6] && f.value.asnwerForm == preguntas.email){
         this.msgAsnwer();
         this.cont = this.cont +1;   
-      }else if(f.value.questionForm == this.question[7] && f.value.asnwerForm == personaISSFA.nombre_parentesco){
+      }else if(f.value.questionForm == this.question[7] && f.value.asnwerForm == preguntas.nombreParent){
         this.msgAsnwer();
         this.cont = this.cont +1;   
       }else{
@@ -172,6 +199,7 @@ export class SoniatPublicoComponent implements OnInit {
 
       if(this.cont==3){
         this.ingresarCHAT();
+        //console.log("preguntas", preguntas)
       }else if(this.intentos==3){
         this.router.navigateByUrl('login');
         this.swalMaximoIntentos()
@@ -204,9 +232,13 @@ export class SoniatPublicoComponent implements OnInit {
     var moment = require("moment");
     var current_timestamp = moment().format("ddd MMM D YYYY 00:00:00");
     var current_timestamp = moment(new Date());
+    let clientIssfa = this.getClientIssfa();
+    
+    //Envio el objeto al servicio
+    this.soniatService.setObjClientIssfa(clientIssfa);
 
     this.result = {
-      email: personaISSFA.email, created_at: current_timestamp._i, id_country: {
+      email: clientIssfa.email, created_at: current_timestamp._i, id_country: {
         id: 103,
       },
     };
@@ -236,13 +268,14 @@ export class SoniatPublicoComponent implements OnInit {
   }
 
   filterClientPublic() {
-    const email = personaISSFA.email;
+    let preguntas = this.getClientIssfa();
+    const email = preguntas.email;
     this.soniatService.getPublic().subscribe(response => {
       const filter = response.reverse()[0].email;
       if (email == filter) {
-         console.log("Email Coincide")
+        //console.log("Email Coincide")
         this.getId = response[0].id;
-        console.log(this.getId);
+        //console.log(this.getId);
         this.setClientPublic();
         this.setClientPrivate();
         this.router.navigateByUrl('soniat');
@@ -286,7 +319,7 @@ export class SoniatPublicoComponent implements OnInit {
     this.themeService.getTheme().subscribe(response => response.forEach((color: Colors) => {
       this.colors.push(color);
       this.setThemeChatbot(response[0].color);
-      console.log(response);
+      //console.log(response);
     }))
   }
 

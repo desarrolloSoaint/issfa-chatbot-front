@@ -10,6 +10,7 @@ export class SoniatService {
   private httpHeaders = new HttpHeaders({ 'Content-Type': 'application/json' })
   private id: number;
   private idPrivate: number;
+  private clienteIssfa: Object;
 
   constructor(private http: HttpClient) { }
 
@@ -19,6 +20,14 @@ export class SoniatService {
 
   public getId(): number {
     return this.id;
+  }
+
+  public setObjClientIssfa(clienteIssfa: Object): void {
+    this.clienteIssfa = clienteIssfa;
+  }
+
+  public getObjClientIssfa(): Object {
+    return this.clienteIssfa;
   }
 
   public setIdPrivate(id: number): void {
@@ -37,12 +46,16 @@ export class SoniatService {
     return this.http.get(`${Url_Back}clients/registros/private`);
   }
 
+  public getClientIssfa(cedula): Observable<any> {
+    return this.http.get(`${Url_Back}clients/private/?cedula=${cedula}`, { headers: this.httpHeaders })
+  }
+
   public getPublicId(id): Observable<any> {
     return this.http.get(`${Url_Back}clients/${id}`, { headers: this.httpHeaders })
   }
 
-  public questionPublic(id, question): Observable<any> {
-    return this.http.get(`${Url_Back}bot/botQuestionPublic?id=${id}&question=${question}`)
+  public questionPublic(id, question, cedula): Observable<any> {
+    return this.http.get(`${Url_Back}bot/botQuestionPublic?id=${id}&question=${question}&cedula=${cedula}`)
   }
 
   public questionPrivate(id, question): Observable<any> {

@@ -36,6 +36,7 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatTableModule } from '@angular/material/table';
+import { DatePipe } from '@angular/common';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatListModule } from '@angular/material/list';
 import { NgFallimgModule } from 'ng-fallimg';
@@ -93,7 +94,7 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
     ViewUserComponent
   ],
 
-  providers: [interceptorProvider, AuthService,
+  providers: [interceptorProvider, AuthService, DatePipe,
     ConfigService,
     {
       provide: APP_INITIALIZER,

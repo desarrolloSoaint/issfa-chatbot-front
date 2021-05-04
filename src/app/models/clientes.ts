@@ -13,3 +13,7 @@ export interface Cliente{
     email: string;
     id_country: number;
 }
+
+export class ClienteIssfa{
+    [data: string]: any;
+}
